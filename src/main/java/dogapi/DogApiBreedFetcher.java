@@ -24,12 +24,40 @@ public class DogApiBreedFetcher implements BreedFetcher {
      * @throws BreedNotFoundException if the breed does not exist (or if the API call fails for any reason)
      */
     @Override
-    public List<String> getSubBreeds(String breed) {
-        // TODO Task 1: Complete this method based on its provided documentation
-        //      and the documentation for the dog.ceo API. You may find it helpful
-        //      to refer to the examples of using OkHttpClient from the last lab,
-        //      as well as the code for parsing JSON responses.
-        // return statement included so that the starter code can compile and run.
-        return new ArrayList<>();
+    public List<String> getSubBreeds(String breed) throws BreedNotFoundException {
+        if (breed == null || breed.isBlank()) {
+            throw new BreedNotFoundException(String.valueOf(breed));
+        }
+
+        String normalized = breed.toLowerCase(Locale.ROOT).trim();
+        String url = String.format("https://dog.ceo/api/breed/%s/list", normalized);
+
+        Request request = new Request.Builder().url(url).get().build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.body() == null) {
+                throw new BreedNotFoundException(breed);
+            }
+
+            String body = response.body().string();
+            JSONObject json = new JSONObject(body);
+
+            String status = json.optString("status", "");
+            if (!"success".equalsIgnoreCase(status)) {
+                throw new BreedNotFoundException(breed);
+            }
+
+            JSONArray arr = json.optJSONArray("message");
+            List<String> result = new ArrayList<>();
+            if (arr != null) {
+                for (int i = 0; i < arr.length(); i++) {
+                    result.add(arr.getString(i));
+                }
+            }
+            return result;
+        } catch (IOException | RuntimeException e) {
+            // Report any failure as BreedNotFoundException as per interface contract
+            throw new BreedNotFoundException(breed);
+        }
     }
 }
