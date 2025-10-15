@@ -19,7 +19,7 @@ and work as usual.
 
 ## Objective
 This mini-assignment is intended to ensure that you are comfortable programming small tasks
-similar to what your team has recently done during labs. These tasks are similar to the kinds
+similar to what your tutorial team has recently done during labs. These tasks are similar to the kinds
 of coding tasks you will be responsible for individually completing as part of your team project, so the
 goal is for everyone to be comfortable working through such tasks independently before your
 team begins the significant coding tasks for your project.
